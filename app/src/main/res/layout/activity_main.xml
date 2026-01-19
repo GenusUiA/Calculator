@@ -20,13 +20,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         />
 
-    <TextView
+    <EditText
         android:id="@+id/input_expression"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:text="0.3*0.2="
+        android:text="0"
         android:gravity="right|center"
         android:textSize="22sp"
+        android:background="@android:color/transparent"
         app:layout_constraintTop_toBottomOf="@id/Calculator"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,7 +38,7 @@
         android:layout_width="0dp"
         android:layout_height="80dp"
         android:gravity="right|center_vertical"
-        android:text="0.06"
+        android:text="0"
         android:background="@android:color/transparent"
         android:textSize="28sp"
         app:layout_constraintTop_toBottomOf="@id/input_expression"
@@ -60,6 +61,8 @@
 
             <Button
                 android:id="@+id/ButtonMC"
+                android:padding="0dp"
+                android:onClick="ClickMemory"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -71,6 +74,8 @@
 
             <Button
                 android:id="@+id/ButtonMR"
+                android:padding="0dp"
+                android:onClick="ClickMemory"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -82,6 +87,8 @@
 
             <Button
                 android:id="@+id/ButtonMS"
+                android:padding="0dp"
+                android:onClick="ClickMemory"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -93,6 +100,8 @@
 
             <Button
                 android:id="@+id/ButtonMPlus"
+                android:padding="0dp"
+                android:onClick="ClickMemory"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -104,6 +113,8 @@
 
             <Button
                 android:id="@+id/ButtonMDiff"
+                android:padding="0dp"
+                android:onClick="ClickMemory"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -116,25 +127,42 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
             <Button
                 android:id="@+id/ButtonOneClickClear"
+                android:padding="0dp"
+                android:onClick="ClickBackspace"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:backgroundTint="@color/gray_dark"
                 android:textColor="@color/black"
                 android:layout_margin="4dp"
-                android:textSize="26sp"
+                android:textSize="32sp"
                 android:gravity="center"
                 android:text="←"
                 />
 
             <Button
-                android:id="@+id/ButtonClear"
+                android:id="@+id/ButtonPlusDiff"
+                android:padding="0dp"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
+                android:layout_margin="4dp"
                 android:layout_weight="1"
+                android:backgroundTint="@color/gray_dark"
+                android:onClick="ClickNumber"
+                android:text="+/-"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+
+            <Button
+                android:id="@+id/ButtonClear"
+                android:onClick="ClickClear"
+                android:layout_width="0dp"
+                android:layout_height="70dp"
+                android:layout_weight="2"
                 android:backgroundTint="@color/blue"
                 android:textColor="@color/black"
                 android:layout_margin="4dp"
@@ -145,10 +173,12 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
 
             <Button
                 android:id="@+id/ButtonFor7"
+                android:onClick="ClickNumber"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -160,6 +190,7 @@
 
             <Button
                 android:id="@+id/ButtonFor8"
+                android:onClick="ClickNumber"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -172,6 +203,7 @@
             <Button
                 android:id="@+id/ButtonFor9"
                 android:layout_width="0dp"
+                android:onClick="ClickNumber"
                 android:layout_height="70dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/gray"
@@ -182,6 +214,7 @@
 
             <Button
                 android:id="@+id/ButtonRoot"
+                android:onClick="Operation"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -193,6 +226,8 @@
 
             <Button
                 android:id="@+id/ButtonReverse"
+                android:padding="0dp"
+                android:onClick="ClickReverse"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -209,6 +244,7 @@
 
             <Button
                 android:id="@+id/ButtonFor4"
+                android:onClick="ClickNumber"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -220,6 +256,7 @@
 
             <Button
                 android:id="@+id/ButtonFor5"
+                android:onClick="ClickNumber"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -231,6 +268,7 @@
 
             <Button
                 android:id="@+id/ButtonFor6"
+                android:onClick="ClickNumber"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -242,6 +280,7 @@
 
             <Button
                 android:id="@+id/ButtonPlus"
+                android:onClick="Operation"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -253,6 +292,7 @@
 
             <Button
                 android:id="@+id/ButtonMultiply"
+                android:onClick="Operation"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -269,6 +309,7 @@
 
             <Button
                 android:id="@+id/ButtonFor1"
+                android:onClick="ClickNumber"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -280,6 +321,7 @@
 
             <Button
                 android:id="@+id/ButtonFor2"
+                android:onClick="ClickNumber"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -291,6 +333,7 @@
 
             <Button
                 android:id="@+id/ButtonFor3"
+                android:onClick="ClickNumber"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -302,6 +345,7 @@
 
             <Button
                 android:id="@+id/ButtonDiff"
+                android:onClick="Operation"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -313,6 +357,7 @@
 
             <Button
                 android:id="@+id/ButtonDivide"
+                android:onClick="Operation"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="1"
@@ -329,6 +374,7 @@
 
             <Button
                 android:id="@+id/ButtonFor0"
+                android:onClick="ClickNumber"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="2"
@@ -340,6 +386,7 @@
 
             <Button
                 android:id="@+id/ButtonForDot"
+                android:onClick="ClickNumber"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_margin="4dp"
@@ -351,6 +398,7 @@
 
             <Button
                 android:id="@+id/ButtonForEqual"
+                android:onClick="ClickEqual"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_weight="2"
