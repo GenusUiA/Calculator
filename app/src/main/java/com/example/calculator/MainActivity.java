@@ -3,6 +3,7 @@ package com.example.calculator;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -13,8 +14,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText input;
-    EditText result;
+    TextView input;
+    TextView result;
 
     String operator = "";
     String oldNumber = "";
@@ -39,83 +40,151 @@ public class MainActivity extends AppCompatActivity {
 
     // обработка нажатий цифр, точки и +-
     public void ClickNumber(View view) {
-        String number = input.getText().toString();
+        String current = input.getText().toString();
 
-        if (isNewInput || number.equals("0") || number.endsWith("=")) {
-            if (view.getId() != R.id.ButtonForDot){
-                number = "";
-            }
-            if (number.endsWith("=")) result.setText("0");
+        int id = view.getId();
+        String toAdd = "";
+
+        // если начало нового ввода или текущий текст = "0" или предыдущий результат
+        boolean replaceZero = isNewInput || (current.equals("0") && id != R.id.ButtonForDot) || current.endsWith("=");
+
+        if (replaceZero) {
+            // если ввод цифры 1-9, заменяем "0" или "="
+            if (id != R.id.ButtonForDot) current = "";
+            // если была точка после "0", оставляем "0"
+            if (current.endsWith("=")) result.setText("0");
             isNewInput = false;
         }
 
-        int id = view.getId();
-
-        if (id == R.id.ButtonFor0) number += "0";
-        else if (id == R.id.ButtonFor1) number += "1";
-        else if (id == R.id.ButtonFor2) number += "2";
-        else if (id == R.id.ButtonFor3) number += "3";
-        else if (id == R.id.ButtonFor4) number += "4";
-        else if (id == R.id.ButtonFor5) number += "5";
-        else if (id == R.id.ButtonFor6) number += "6";
-        else if (id == R.id.ButtonFor7) number += "7";
-        else if (id == R.id.ButtonFor8) number += "8";
-        else if (id == R.id.ButtonFor9) number += "9";
-
+        // определяем что добавляем
+        if (id == R.id.ButtonFor0) toAdd = "0";
+        else if (id == R.id.ButtonFor1) toAdd = "1";
+        else if (id == R.id.ButtonFor2) toAdd = "2";
+        else if (id == R.id.ButtonFor3) toAdd = "3";
+        else if (id == R.id.ButtonFor4) toAdd = "4";
+        else if (id == R.id.ButtonFor5) toAdd = "5";
+        else if (id == R.id.ButtonFor6) toAdd = "6";
+        else if (id == R.id.ButtonFor7) toAdd = "7";
+        else if (id == R.id.ButtonFor8) toAdd = "8";
+        else if (id == R.id.ButtonFor9) toAdd = "9";
         else if (id == R.id.ButtonForDot) {
-            if (!number.contains(".")) number += ".";
+            // если точка уже есть в последнем числе, не добавляем
+            // ищем последнее число после последнего оператора
+            int lastOp = Math.max(current.lastIndexOf('+'),
+                    Math.max(current.lastIndexOf('-'),
+                            Math.max(current.lastIndexOf('*'),
+                                    current.lastIndexOf('/'))));
+            String lastNumber = lastOp >= 0 ? current.substring(lastOp + 1) : current;
+            if (!lastNumber.contains(".")) toAdd = ".";
+            else toAdd = ""; // точка уже есть
+            if (lastNumber.isEmpty()) toAdd = "0."; // если точка в начале числа
         }
         else if (id == R.id.ButtonPlusDiff) {
-            if (!number.startsWith("-")) number = "-" + number;
-            else number = number.substring(1);
+            // меняем знак последнего числа
+            int lastOp = Math.max(current.lastIndexOf('+'),
+                    Math.max(current.lastIndexOf('-'),
+                            Math.max(current.lastIndexOf('*'),
+                                    current.lastIndexOf('/'))));
+            if (lastOp >= 0) {
+                String before = current.substring(0, lastOp + 1);
+                String lastNum = current.substring(lastOp + 1);
+                if (!lastNum.startsWith("-")) lastNum = "-" + lastNum;
+                else lastNum = lastNum.substring(1);
+                current = before + lastNum;
+            } else {
+                if (!current.startsWith("-")) current = "-" + current;
+                else current = current.substring(1);
+            }
         }
 
-        input.setText(number);
+        input.setText(current + toAdd);
     }
 
     // обработка нажатий на арифметические операции
     public void Operation(View view) {
-        String number = input.getText().toString();
+        String current = input.getText().toString();
 
-        if (number.endsWith("=")){
-            number = result.getText().toString();
+        // Если предыдущий результат уже был, начинаем новое выражение
+        if (current.endsWith("=")) {
+            current = result.getText().toString();
+            input.setText(current);
         }
 
         int id = view.getId();
 
-        if (id == R.id.ButtonPlus) operator = "+";
-        else if (id == R.id.ButtonDiff) operator = "-";
-        else if (id == R.id.ButtonMultiply) operator = "*";
-        else if (id == R.id.ButtonDivide) operator = "/";
+        // Определяем оператор
+        String op = "";
+        if (id == R.id.ButtonPlus) op = "+";
+        else if (id == R.id.ButtonDiff) op = "-";
+        else if (id == R.id.ButtonMultiply) op = "*";
+        else if (id == R.id.ButtonDivide) op = "/";
+        else if (id == R.id.ButtonRoot) op = "√";
 
-        input.setText(number + " " + operator + " ");
-        oldNumber = number;
+        if (op.equals("√")) {
+            // Корень вычисляем сразу
+            try {
+                double n = Double.parseDouble(current);
+                double r = Math.sqrt(n);
+                input.setText("√" + current + "=");
+                result.setText(String.valueOf(r));
+                isNewInput = true;
+                operator = "";
+                oldNumber = String.valueOf(r);
+            } catch (Exception e) {
+                Toast.makeText(this, "Ошибка вычисления корня", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+
+        // Если последний символ уже оператор, заменяем его
+        if (!current.isEmpty()) {
+            char lastChar = current.charAt(current.length() - 1);
+            if (lastChar == '+' || lastChar == '-' || lastChar == '*' || lastChar == '/') {
+                current = current.substring(0, current.length() - 1);
+            }
+        }
+
+        input.setText(current + op);
+        operator = op;
+        oldNumber = current;
+        isNewInput = false;
     }
 
     // подсчет результата
     public void ClickEqual(View view) {
-        String expression = input.getText().toString();
-        double r = 0.0;
+        String expr = input.getText().toString();
+
+        if (operator.isEmpty() || expr.endsWith("=")) return;
 
         try {
-            double a = Double.parseDouble(oldNumber);
-            String[] parts = expression.split(" ");
-            double b = Double.parseDouble(parts[parts.length - 1]);
+            double resultValue = 0.0;
+            String[] parts = expr.split("(?=[+\\-*/])|(?<=[+\\-*/])");
+            // разделяем на числа и операторы, сохраняем порядок
 
-            switch (operator) {
-                case "+": r = a + b; break;
-                case "-": r = a - b; break;
-                case "*": r = a * b; break;
-                case "/":
-                    if (b == 0) {
+            double currentValue = Double.parseDouble(parts[0]);
+
+            // вычисляем последовательно
+            for (int i = 1; i < parts.length; i += 2) {
+                String op = parts[i];
+                double next = Double.parseDouble(parts[i + 1]);
+
+                if (op.equals("+")) currentValue += next;
+                else if (op.equals("-")) currentValue -= next;
+                else if (op.equals("*")) currentValue *= next;
+                else if (op.equals("/")) {
+                    if (next == 0) {
                         Toast.makeText(this, "Ошибка: деление на ноль!", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    r = a / b;
-                    break;
+                    currentValue /= next;
+                }
             }
-            input.setText(expression + " =");
-            result.setText(String.valueOf(r));
+
+            resultValue = currentValue;
+            input.setText(expr + "=");
+            result.setText(String.valueOf(resultValue));
+            oldNumber = String.valueOf(resultValue);
+            operator = "";
             isNewInput = true;
 
         } catch (Exception e) {
