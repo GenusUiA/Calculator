@@ -14,8 +14,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView input;
-    TextView result;
+    TextView input;  // поле ввода
+    TextView result; // поле вывода
 
     String operator = "";
     String oldNumber = "";
@@ -37,6 +37,28 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
     }
+    // метод для передачи данных горизонтальному состоянию
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("input", input.getText().toString());
+        outState.putString("result", result.getText().toString());
+        outState.putDouble("memory", memory);
+        outState.putString("operator", operator);
+        outState.putString("oldNumber", oldNumber);
+        outState.putBoolean("isNewInput", isNewInput);
+        super.onSaveInstanceState(outState);
+    }
+    // метод для передачи данных из горизонтального в вертикальное
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        input.setText(savedInstanceState.getString("input"));
+        result.setText(savedInstanceState.getString("result"));
+        memory = savedInstanceState.getDouble("memory");
+        operator = savedInstanceState.getString("operator", "");
+        oldNumber = savedInstanceState.getString("oldNumber", "");
+        isNewInput = savedInstanceState.getBoolean("isNewInput", true);
+    }
 
     // обработка нажатий цифр, точки и +-
     public void ClickNumber(View view) {
@@ -45,18 +67,15 @@ public class MainActivity extends AppCompatActivity {
         int id = view.getId();
         String toAdd = "";
 
-        // если начало нового ввода или текущий текст = "0" или предыдущий результат
+        // замена нуля в случае следующих условий
         boolean replaceZero = isNewInput || (current.equals("0") && id != R.id.ButtonForDot) || current.endsWith("=");
 
         if (replaceZero) {
-            // если ввод цифры 1-9, заменяем "0" или "="
             if (id != R.id.ButtonForDot) current = "";
-            // если была точка после "0", оставляем "0"
             if (current.endsWith("=")) result.setText("0");
             isNewInput = false;
         }
 
-        // определяем что добавляем
         if (id == R.id.ButtonFor0) toAdd = "0";
         else if (id == R.id.ButtonFor1) toAdd = "1";
         else if (id == R.id.ButtonFor2) toAdd = "2";
@@ -68,8 +87,7 @@ public class MainActivity extends AppCompatActivity {
         else if (id == R.id.ButtonFor8) toAdd = "8";
         else if (id == R.id.ButtonFor9) toAdd = "9";
         else if (id == R.id.ButtonForDot) {
-            // если точка уже есть в последнем числе, не добавляем
-            // ищем последнее число после последнего оператора
+            // проверка добавления точки
             int lastOp = Math.max(current.lastIndexOf('+'),
                     Math.max(current.lastIndexOf('-'),
                             Math.max(current.lastIndexOf('*'),
@@ -192,7 +210,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     // нажатие очистки
     public void ClickClear(View view) {
         input.setText("0");
@@ -202,18 +219,18 @@ public class MainActivity extends AppCompatActivity {
         isNewInput = true;
     }
 
-
     // стереть 1 значение
     public void ClickBackspace(View view) {
+        // если строка не равна 1 уменьшаем длину строки, иначе приравниваем к нулю
         String s = input.getText().toString();
         if (s.length() > 1) s = s.substring(0, s.length() - 1);
         else s = "0";
         input.setText(s);
     }
 
-
     // 1 разделить на число
     public void ClickReverse(View view) {
+        //проверка деления на 0, если прошла, выполняем операцию
         try {
             double n = Double.parseDouble(input.getText().toString());
             if (n == 0) {
